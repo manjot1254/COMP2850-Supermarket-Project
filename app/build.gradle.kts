@@ -29,6 +29,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // For database
+    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
