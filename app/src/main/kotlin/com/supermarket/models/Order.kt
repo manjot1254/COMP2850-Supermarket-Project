@@ -1,4 +1,4 @@
-package com.supermarket
+package com.supermarket.models
 
 data class Order(
     val orderId: Int,

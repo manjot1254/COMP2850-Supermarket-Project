@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS categories (
   category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name VARCHAR(255),
+  name VARCHAR(255) NOT NULL,
   description text
 );
 
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS user_favourites (
 CREATE TABLE IF NOT EXISTS addresses (
   address_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  line_1 VARCHAR(255),
+  line_1 VARCHAR(255) NOT NULL,
   line_2 VARCHAR(255),
-  town VARCHAR(100),
-  country VARCHAR(100),
-  postcode VARCHAR(100),
+  town VARCHAR(100) NOT NULL,
+  country VARCHAR(100) NOT NULL,
+  postcode VARCHAR(100) NOT NULL,
 
   FOREIGN KEY (user_id)
     REFERENCES users(user_id)
@@ -211,10 +211,10 @@ CREATE TABLE IF NOT EXISTS picking_list_items (
   list_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
-  picked_at DATETIME,
-  quantity_picked INTEGER,
-  quantity_required INTEGER,
-  item_status VARCHAR(50),
+  picked_at DATETIME NOT NULL,
+  quantity_picked INTEGER NOT NULL,
+  quantity_required INTEGER NOT NULL,
+  item_status VARCHAR(50) NOT NULL,
 
   -- Manual ENUM implementation (unsupported in SQLite)
   CHECK(item_status IN ('pending', 'in_progress', 'completed')),
@@ -249,7 +249,11 @@ CREATE TABLE IF NOT EXISTS deliveries (
   warehouse_id INTEGER,
   user_id INTEGER,
   supplier VARCHAR(255),
+  delivery_status VARCHAR(50),
   received_at DATETIME,
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(delivery_status IN ('pending', 'in_progress', 'completed')),
   
   FOREIGN KEY (warehouse_id)
     REFERENCES warehouse(warehouse_id),
