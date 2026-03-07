@@ -15,6 +15,17 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS user_sessions (
+  session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  ip_address VARCHAR(50),
+  created_at DATETIME NOT NULL,
+  expires_at DATETIME NOT NULL,
+
+  FOREIGN KEY (user_id)
+    REFERENCES users(user_id)
+);
+
 CREATE TABLE IF NOT EXISTS products (
   product_id INTEGER PRIMARY KEY AUTOINCREMENT,
   category_id INTEGER NOT NULL,
@@ -32,8 +43,8 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE TABLE IF NOT EXISTS user_favourites (
-  user_id INTEGEREGER,
-  product_id INTEGEREGER,
+  user_id INTEGER,
+  product_id INTEGER,
   created_at DATETIME NOT NULL,
 
   PRIMARY KEY (user_id, product_id),
@@ -62,6 +73,7 @@ CREATE TABLE IF NOT EXISTS orders (
   order_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   address_id INTEGER,
+  list_id INTEGER,
   total_price DECIMAL(10,2),
   delivery_slot DATETIME,
   order_status VARCHAR(255),
@@ -71,7 +83,9 @@ CREATE TABLE IF NOT EXISTS orders (
   FOREIGN KEY (user_id)
     REFERENCES users(user_id),
   FOREIGN KEY (address_id)
-    REFERENCES addresses(address_id)
+    REFERENCES addresses(address_id),
+  FOREIGN KEY (list_id)
+    REFERENCES picking_list(list_id)
 );
 
 CREATE TABLE IF NOT EXISTS payments (
@@ -94,8 +108,9 @@ CREATE TABLE IF NOT EXISTS order_items (
   price DECIMAL(10,2),
   substituted_product_id INTEGER,
 
-  -- Check if valid substitution
+  -- Check if valid substitution and order
   CHECK(substituted_product_id != product_id),
+  CHECK(quantity_ordered > 0),
 
   FOREIGN KEY (order_id)
     REFERENCES orders(order_id),
