@@ -8,6 +8,6 @@ data class Product(
     val barcode: String,
     val price: Double,
     val volumePerUnit: Double,
-    val imageUrl: String?
+    val imageUrl: String?,
     val createdAt: String
 )
