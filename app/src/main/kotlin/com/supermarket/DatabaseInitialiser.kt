@@ -1,3 +1,4 @@
+package com.supermarket
 import java.sql.DriverManager
 import java.io.File
 

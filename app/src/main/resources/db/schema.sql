@@ -4,6 +4,12 @@ CREATE TABLE IF NOT EXISTS categories (
   description text
 );
 
+CREATE TABLE IF NOT EXISTS warehouse (
+  warehouse_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name VARCHAR(255),
+  location VARCHAR(255)
+);
+
 CREATE TABLE IF NOT EXISTS users (
   user_id INTEGER PRIMARY KEY AUTOINCREMENT,   
   first_name VARCHAR(255) NOT NULL,
@@ -68,17 +74,47 @@ CREATE TABLE IF NOT EXISTS addresses (
   FOREIGN KEY (user_id)
     REFERENCES users(user_id)
 );
+CREATE TABLE IF NOT EXISTS picking_list (
+  -- User ID link for picker (warehouse worker)
+  list_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  warehouse_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  list_status VARCHAR(50) NOT NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME,
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(list_status IN ('pending', 'in_progress', 'completed')),
+
+  FOREIGN KEY (warehouse_id)
+    REFERENCES warehouse(warehouse_id),
+  FOREIGN KEY (user_id)
+    REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS shopping_basket (
+  basket_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME,
+
+  FOREIGN KEY (order_id)
+    REFERENCES orders(order_id)
+);
 
 CREATE TABLE IF NOT EXISTS orders (
   order_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  address_id INTEGER,
+  address_id INTEGER NOT NULL,
   list_id INTEGER,
-  total_price DECIMAL(10,2),
+  total_price DECIMAL(10,2) NOT NULL,
   delivery_slot DATETIME,
-  order_status VARCHAR(255),
+  order_status VARCHAR(50) NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME,
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(order_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
 
   FOREIGN KEY (user_id)
     REFERENCES users(user_id),
@@ -91,10 +127,13 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS payments (
   payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id INTEGER NOT NULL,
-  payment_method VARCHAR(255),
-  amount DECIMAL(10,2),
-  payment_status VARCHAR(255),
-  transaction_reference VARCHAR(255),
+  payment_method VARCHAR(255) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  payment_status VARCHAR(50) NOT NULL,
+  transaction_reference VARCHAR(255) NOT NULL,
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(payment_status IN ('pending', 'authorised', 'declined', 'cancelled', 'refunded')),
 
   FOREIGN KEY (order_id)
     REFERENCES orders(order_id)
@@ -104,8 +143,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   order_item_id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
-  quantity_ordered INTEGER,
-  price DECIMAL(10,2),
+  quantity_ordered INTEGER NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
   substituted_product_id INTEGER,
 
   -- Check if valid substitution and order
@@ -118,16 +157,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     REFERENCES products(product_id),
   FOREIGN KEY (substituted_product_id)
     REFERENCES products(product_id)
-);
-
-CREATE TABLE IF NOT EXISTS shopping_basket (
-  basket_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  order_id INTEGER NOT NULL,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME,
-
-  FOREIGN KEY (order_id)
-    REFERENCES orders(order_id)
 );
 
 CREATE TABLE IF NOT EXISTS shopping_basket_items (
@@ -143,19 +172,12 @@ CREATE TABLE IF NOT EXISTS shopping_basket_items (
     REFERENCES products(product_id)
 );
 
--- Warehousing
-CREATE TABLE IF NOT EXISTS warehouse (
-  warehouse_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name VARCHAR(255),
-  location VARCHAR(255)
-);
-
 CREATE TABLE IF NOT EXISTS stock (
   -- Must be dynamically updated - multiple users will be updating simultaenously
   stock_id INTEGER PRIMARY KEY AUTOINCREMENT,
   product_id INTEGER NOT NULL,
   warehouse_id INTEGER NOT NULL,
-  quantity INTEGER,
+  quantity INTEGER NOT NULL DEFAULT 0,
   updated_at DATETIME,
 
   -- Check valid stock
@@ -184,21 +206,6 @@ CREATE TABLE IF NOT EXISTS stock_movements (
     REFERENCES products(product_id)
 );
 
-CREATE TABLE IF NOT EXISTS picking_list (
-  -- User ID link for picker (warehouse worker)
-  list_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  warehouse_id INTEGER,
-  user_id INTEGER,
-  list_status VARCHAR(255),
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME,
-
-  FOREIGN KEY (warehouse_id)
-    REFERENCES warehouse(warehouse_id),
-  FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
-);
-
 CREATE TABLE IF NOT EXISTS picking_list_items (
   list_item_id INTEGER PRIMARY KEY AUTOINCREMENT,
   list_id INTEGER NOT NULL,
@@ -207,7 +214,10 @@ CREATE TABLE IF NOT EXISTS picking_list_items (
   picked_at DATETIME,
   quantity_picked INTEGER,
   quantity_required INTEGER,
-  item_status VARCHAR(255),
+  item_status VARCHAR(50),
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(item_status IN ('pending', 'in_progress', 'completed')),
 
   -- Check valid quantity ordered
   CHECK(quantity_required >= 0),
@@ -224,7 +234,10 @@ CREATE TABLE IF NOT EXISTS warehouse_capacity (
   warehouse_id INTEGER PRIMARY KEY,
   current_volume INTEGER,
   max_volume INTEGER,
-  capacity_status VARCHAR(255),
+  capacity_status VARCHAR(50),
+
+  -- Manual ENUM implementation (unsupported in SQLite)
+  CHECK(capacity_status IN ('available', 'full')),
 
   FOREIGN KEY (warehouse_id)
     REFERENCES warehouse(warehouse_id)
