@@ -5,6 +5,9 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/9.2.1/userguide/building_java_projects.html in the Gradle documentation.
  */
 
+// Constant for consistent Kotest version use
+val kotestVersion = "5.9.1"
+
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
@@ -41,6 +44,20 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
 
     implementation("ch.qos.logback:logback-classic:1.4.14")
+
+    // Kotest for testing
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+}
+
+// Test task configuration to use JUnit and log test results
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

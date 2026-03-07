@@ -17,7 +17,7 @@ VALUES
 ('Aisha', 'Khan', 'aisha@email.com', '07333333333', 'hashedpassword', 'customer', DATE('now')),
 ('Amelia', 'Wilson', 'amelia@email.com', '07444444444', 'hashedpassword', 'customer', DATE('now')),
 ('John', 'Taylor', 'john@email.com', '07555555555', 'hashedpassword', 'customer', DATE('now')),
-('Liam', 'Green', 'liam@warehouse.com', '07666666666', 'hashedpassword', 'worker', DATE('now'));
+('Liam', null, 'liam@warehouse.com', '07666666666', 'hashedpassword', 'worker', DATE('now'));
 
 INSERT OR IGNORE INTO user_sessions (user_id, ip_address, created_at, expires_at)
 VALUES

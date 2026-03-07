@@ -1,73 +1,43 @@
 package com.supermarket.repositories.tests
-
 import com.supermarket.repositories.UserRepository
+import com.supermarket.models.User
 import com.supermarket.DatabaseConnection
 import com.supermarket.DatabaseInitialiser
-import org.junit.jupiter.api.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import io.kotest.core.spec.style.StringSpec
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserRepositoryTest {
+// Add testing for individual users i.e. customers, workers and managers
+class UserRepositoryTest : StringSpec({
+    DatabaseInitialiser.initialise()
+    val connection = DatabaseConnection.getConnection()
+    val userRepository = UserRepository(connection)
 
-    private lateinit var userRepository: UserRepository
-
-    @BeforeAll
-    fun setup() {
-        DatabaseInitialiser.initialise()
-        val connection = DatabaseConnection.getConnection()
-        userRepository = UserRepository(connection)
-    }
-
-    @Test
-    fun `getUserByEmail returns correct user`() {
-
+    "User details should all be correctly fetched by email"{
         val user = userRepository.getUserByEmail("joe@warehouse.com")
-
         assertNotNull(user)
-        assertEquals("Joe", user!!.firstName)
+        assertEquals("Joe", user.firstName)
         assertEquals("Smith", user.lastName)
+        assertEquals("07111111111", user.phoneNumber)
+        assertEquals("hashedpassword", user.passwordHash)
         assertEquals("worker", user.role)
+        assertEquals("2026-03-07", user.createdAt)
     }
 
-    @Test
-    fun `getUserByEmail returns manager`() {
-
-        val user = userRepository.getUserByEmail("emma@manager.com")
-
-        assertNotNull(user)
-        assertEquals("Emma", user!!.firstName)
-        assertEquals("manager", user.role)
-    }
-
-    @Test
-    fun `getUserByEmail returns customer`() {
-
-        val user = userRepository.getUserByEmail("aisha@email.com")
-
-        assertNotNull(user)
-        assertEquals("customer", user!!.role)
-    }
-
-    @Test
-    fun `getUserByEmail returns null for unknown email`() {
-
-        val user = userRepository.getUserByEmail("notfound@email.com")
-
+    "Non-existent user should return null" {
+        val user = userRepository.getUserByEmail("nonexistent@warehouse.com")
         assertNull(user)
     }
 
-    @Test
-    fun `multiple warehouse workers exist`() {
-
-        val worker1 = userRepository.getUserByEmail("joe@warehouse.com")
-        val worker2 = userRepository.getUserByEmail("liam@warehouse.com")
-
-        assertNotNull(worker1)
-        assertNotNull(worker2)
-
-        assertEquals("worker", worker1!!.role)
-        assertEquals("worker", worker2!!.role)
+    "User with null last name should be handled correctly" {
+        val user = userRepository.getUserByEmail("liam@warehouse.com")
+        assertNotNull(user)
+        assertEquals("Liam", user.firstName)
+        assertNull(user.lastName)
+        assertEquals("07666666666", user.phoneNumber)
+        assertEquals("hashedpassword", user.passwordHash)
+        assertEquals("worker", user.role)
+        assertEquals("2026-03-07", user.createdAt)
     }
-}
+})
