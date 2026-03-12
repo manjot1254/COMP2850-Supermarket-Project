@@ -80,6 +80,13 @@ fun main() {
 
                 call.respondText("User registered successfully")
             }
+
+            // Warehouse route
+            get("/warehouse") {
+                call.respondFile(java.io.File("src/main/resources/warehouse.html"))
+            }
+
+            
         }
     }.start(wait = true)
 }

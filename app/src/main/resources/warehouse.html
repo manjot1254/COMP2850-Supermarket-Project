@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Warehouse Management</title>
+<style>
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+}
+.container{
+    width:900px;
+    margin:auto;
+    padding: 20px;
+}
+.header{
+    display:flex;
+    justify-content:space-between;
+    padding:20px 0;
+    font-size:22px;
+    margin-bottom:20px;
+}
+.warehouse-selector{
+    background:white;
+    padding:20px;
+    border:2px solid black;
+    margin-bottom:20px;
+}
+.warehouse-selector label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:bold;
+    font-size:16px;
+}
+#warehouse{
+    width:100%;
+    padding:10px;
+    font-size:14px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    cursor:pointer;
+}
+.warehouse-contents-wrapper{
+    background:white;
+    padding:20px;
+    border:2px solid black;
+}
+.warehouse-contents-wrapper h3{
+    margin-top:0;
+}
+.warehouse-contents{
+    height:400px;
+    overflow-y:auto;
+    border:1px solid #ddd;
+    padding:10px;
+    background:#fafafa;
+}
+.warehouse-item{
+    padding:10px;
+    margin-bottom:10px;
+    background:white;
+    border:1px solid #e0e0e0;
+    border-radius:4px;
+}
+.warehouse-item strong{
+    color:#333;
+}
+.no-contents{
+    padding:20px;
+    text-align:center;
+    color:#999;
+}
+button{
+    padding:10px 20px;
+    cursor:pointer;
+}
+</style>
+<body>
+<div class="container">
+    <div class="header">
+        <div>Warehouse Management</div>
+        <div><a href="/">Back to Home</a></div>
+    </div>
+    <!-- Warehouse Selection -->
+    <div class="warehouse-selector">
+        <label for="warehouse">Select Warehouse:</label>
+        <select id="warehouse" name="warehouse">
+            <option value="" selected disabled>-- Choose a warehouse --</option>
+            <option value="main" data-warehouse-id="WH001">Main Warehouse</option>
+            <option value="secondary" data-warehouse-id="WH002">Secondary Warehouse</option>
+        </select>
+    </div>
+    <!-- Warehouse contents in scrollable container -->
+    <div class="warehouse-contents-wrapper">
+        <h3>Warehouse Contents</h3>
+        <div class="warehouse-contents" id="warehouseContents">
+            <div class="no-contents">Select a warehouse to view contents</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample warehouse data - to be replaced  via script which pulls from database
+    const warehouseData = {
+        main: {
+            id: 'WH001',
+            name: 'Main Warehouse',
+            contents: [
+                {name: 'Product A', quantity: 150 },
+                {name: 'Product B', quantity: 200 },
+                {name: 'Product C', quantity: 75 },
+                {name: 'Product D', quantity: 320 },
+                {name: 'Product E', quantity: 100 }
+            ]
+        },
+        secondary: {
+            id: 'WH002',
+            name: 'Secondary Warehouse',
+            contents: [
+                {name: 'Product X', quantity: 50 },
+                {name: 'Product Y', quantity: 120 },
+                {name: 'Product Z', quantity: 85 },
+                {name: 'Product Y', quantity: 120 }
+            ]
+        }
+    };
+
+    const warehouseSelect = document.getElementById('warehouse');
+    const warehouseContentsDiv = document.getElementById('warehouseContents');
+    warehouseSelect.addEventListener('change', function() {
+        const selectedWarehouse = this.value;
+        const selectedOption = this.options[this.selectedIndex];
+        const warehouseId = selectedOption.getAttribute('data-warehouse-id');
+        if (!selectedWarehouse) {
+            warehouseContentsDiv.innerHTML = '<div class="no-contents">Select a warehouse to view contents</div>';
+            return;
+        }
+
+        const warehouse = warehouseData[selectedWarehouse];
+        
+        if (!warehouse) {
+            warehouseContentsDiv.innerHTML = '<div class="no-contents">Warehouse data not found</div>';
+            return;
+        }
+
+        let contentsHTML = '';
+        if (warehouse.contents.length === 0) {
+            contentsHTML = '<div class="no-contents">No items in this warehouse</div>';
+        } else {
+            warehouse.contents.forEach(item => {
+                contentsHTML += `
+                    <div class="warehouse-item">
+                        <strong>${item.sku}</strong> - ${item.name}<br>
+                        Quantity: ${item.quantity}
+                    </div>
+                `;
+            });
+        }
+        warehouseContentsDiv.innerHTML = contentsHTML;
+    });
+</script>
+</body>   
+</html>
