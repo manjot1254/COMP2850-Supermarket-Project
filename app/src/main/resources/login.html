@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Supermarket Login</title>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
 <style>
 body{
@@ -61,52 +62,40 @@ button{
 
 <!-- LOGIN -->
 <div class="box">
-<h2>Sign In</h2>
+<h2>Log in</h2>
 
-<form action="/login" method="post">
+<form 
+    hx-post="/login"
+    hx-target="#login-result"
+    hx-swap="innerHTML">
 
-<label>Email Address</label>
-<input type="email" name="email" required>
+    <input name="email" placeholder="Email">
+    <input name="password" placeholder = "Password" type="password">
 
-<label>Password</label>
-<input type="password" name="password" required>
-
-<button type="submit">Log In</button>
-
+    <button type="submit">Login</button>
 </form>
+<div id="login-result"></div>
 </div>
-
 
 <!-- REGISTER -->
 <div class="box">
 <h2>Register</h2>
 
-<form action="/register" method="post">
+<form 
+    hx-post="/register"
+    hx-target="#register-result"
+    hx-swap="innerHTML">
 
-<label>Email Address</label>
-<input type="email" name="email" required>
+    <input name="email" placeholder="Email" required>
+    <input name="password" placeholder = "Password" type="password" required>
+    <input type="password" placeholder = "Confirm Password" name="confirmPassword" required>
+    <input type="text" placeholder = "First Name" name="firstName" required>
+    <input type="text" placeholder = "Last Name" name="lastName" required>
+    <input type="text" placeholder = "Phone Number" name="phoneNumber" required>
 
-<label>Password</label>
-<input type="password" name="password" required>
-
-<label>Confirm Password</label>
-<input type="password" name="confirmPassword" required>
-
-<label>First Name</label>
-<input type="text" name="firstName" required>
-
-<label>Last Name</label>
-<input type="text" name="lastName" required>
-
-<label>Phone Number</label>
-<input type="text" name="phoneNumber" required>
-
-<label>Home Address</label>
-<input type="text" name="address" required>
-
-<button type="submit">Sign Up</button>
-
+    <button type="submit">Sign Up</button>
 </form>
+<div id = "register-result"></div>
 </div>
 
 </div>
