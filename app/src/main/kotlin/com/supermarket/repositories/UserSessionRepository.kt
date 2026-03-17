@@ -13,7 +13,11 @@ import io.ktor.http.content.*
 class UserSessionRepository(private val connection: Connection) {
 
     fun createSession(userId: Int, sessionId: String) {
-        val sql = "INSERT INTO user_sessions (user_id, session_id) VALUES (?, ?)"
+        val sql = """
+            INSERT INTO user_sessions 
+            (user_id, session_id, created_at, expires_at)
+            VALUES (?, ?, datetime('now'), datetime('now', '+1 day'))
+        """
         val stmt = connection.prepareStatement(sql).use { stmt ->
             stmt.setInt(1, userId)
             stmt.setString(2, sessionId)
@@ -44,14 +48,6 @@ class UserSessionRepository(private val connection: Connection) {
                 )
             } else null
         }
-    }
-
-    fun getLoggedInUser(call: ApplicationCall, userRepository: UserRepository): User? {
-        val sessionId = call.request.cookies["SESSION_ID"] ?: return null
-
-        val userId = getUserIdBySessionId(sessionId)
-
-        return if (userId != null) userRepository.getUserByEmail(userId) else null
     }
 
     fun deleteSession(sessionId: String) {

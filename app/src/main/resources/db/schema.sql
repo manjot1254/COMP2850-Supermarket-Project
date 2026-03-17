@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS user_sessions (
-  session_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
+  session_id TEXT,
   ip_address VARCHAR(50),
   created_at DATETIME NOT NULL,
   expires_at DATETIME NOT NULL,

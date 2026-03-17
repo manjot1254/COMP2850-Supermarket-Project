@@ -41,7 +41,7 @@ body{
     margin-bottom: 12px;
 }
 
-nav a {
+.nav-links a {
     padding: 8px 14px;
     border-right: 2px solid black;
     text-decoration: none;
@@ -72,22 +72,21 @@ button{
 
 <div class="header">
 <div>Logo</div>
-<nav>
-    <a href="/profile">Profile</a>
-    <a href="/login">Log in / Register</a>
-</nav>
 
 <!-- NAVBAR -->
-<div 
+<nav 
     hx-get="/navbar"
     hx-trigger="load"
-    hx-target="this">
-</div>
+    hx-target="this"
+    hx-swap="innerHTML">
+</nav>
 
 <!-- GROCERIES / BASKET -->
 <nav>
-    <a href="/groceries">Groceries</a>
-    <a href="/basket">Basket 🧺</a>
+    <div class="nav-links">
+        <a href="/groceries">Groceries</a>
+        <a href="/basket">Basket 🧺</a>
+    </div>
 </nav>
 
 </div>
