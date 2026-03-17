@@ -11,41 +11,51 @@ body{
 }
 
 .container{
-    width:900px;
-    margin:auto;
+    width: 900px;
+    margin: auto;
 }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    padding:20px;
-    font-size:22px;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    font-size: 22px;
 }
 
 .forms{
-    display:flex;
-    gap:40px;
+    display: flex;
+    gap: 40px;
 }
 
 .box{
-    background:white;
-    padding:30px;
-    width:50%;
-    border:2px solid black;
+    background: white;
+    padding: 30px;
+    width: 50%;
+    border: 2px solid black;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 5px;
+    margin-bottom: 12px;
 }
 
 nav a {
-    padding: 15px 30px;
+    padding: 8px 14px;
     border-right: 2px solid black;
     text-decoration: none;
     color: black;
 }
 
 input{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
-    margin-bottom:15px;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 15px;
 }
 
 button{
@@ -67,6 +77,12 @@ button{
     <a href="/login">Log in / Register</a>
 </nav>
 
+<!-- NAVBAR -->
+<div 
+    hx-get="/navbar"
+    hx-trigger="load"
+    hx-target="this">
+</div>
 
 <!-- GROCERIES / BASKET -->
 <nav>
@@ -77,7 +93,18 @@ button{
 </div>
 
 <!-- SEARCH -->
+<input 
+    type="text"
+    name="query"
+    placeholder="Search groceries..."
+    
+    hx-get="/search"
+    hx-params="*"
+    hx-trigger="keyup changed delay:400ms"
+    hx-target="#search-results"
+    hx-swap="innerHTML">
 
+<div id="search-results"></div>
 
 </form>
 </div>

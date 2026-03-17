@@ -1,7 +1,10 @@
 package com.supermarket.repositories
 
 import com.supermarket.models.User
+import com.supermarket.repositories.UserSessionRepository
 import java.sql.Connection
+import java.util.UUID
+
 
 class UserRepository(private val connection: Connection) {
 
@@ -51,4 +54,5 @@ class UserRepository(private val connection: Connection) {
             stmt.executeUpdate()
         }
     }
+    
 }
