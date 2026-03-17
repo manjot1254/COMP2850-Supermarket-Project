@@ -106,63 +106,77 @@ button{
 </div>
 
 <script>
-    // Sample warehouse data - to be replaced  via script which pulls from database
+    // Initialize empty warehouse data
     const warehouseData = {
-        main: {
-            id: 'WH001',
-            name: 'Main Warehouse',
-            contents: [
-                {name: 'Product A', quantity: 150 },
-                {name: 'Product B', quantity: 200 },
-                {name: 'Product C', quantity: 75 },
-                {name: 'Product D', quantity: 320 },
-                {name: 'Product E', quantity: 100 }
-            ]
-        },
-        secondary: {
-            id: 'WH002',
-            name: 'Secondary Warehouse',
-            contents: [
-                {name: 'Product X', quantity: 50 },
-                {name: 'Product Y', quantity: 120 },
-                {name: 'Product Z', quantity: 85 },
-                {name: 'Product Y', quantity: 120 }
-            ]
-        }
+        main: { id: 'WH001', name: 'Main Warehouse', contents: [] },
+        secondary: { id: 'WH002', name: 'Secondary Warehouse', contents: [] }
     };
 
-    const warehouseSelect = document.getElementById('warehouse');
-    const warehouseContentsDiv = document.getElementById('warehouseContents');
-    warehouseSelect.addEventListener('change', function() {
-        const selectedWarehouse = this.value;
-        const selectedOption = this.options[this.selectedIndex];
-        const warehouseId = selectedOption.getAttribute('data-warehouse-id');
-        if (!selectedWarehouse) {
-            warehouseContentsDiv.innerHTML = '<div class="no-contents">Select a warehouse to view contents</div>';
-            return;
-        }
-
-        const warehouse = warehouseData[selectedWarehouse];
-        
-        if (!warehouse) {
-            warehouseContentsDiv.innerHTML = '<div class="no-contents">Warehouse data not found</div>';
-            return;
-        }
-
-        let contentsHTML = '';
-        if (warehouse.contents.length === 0) {
-            contentsHTML = '<div class="no-contents">No items in this warehouse</div>';
-        } else {
-            warehouse.contents.forEach(item => {
-                contentsHTML += `
-                    <div class="warehouse-item">
-                        <strong>${item.sku}</strong> - ${item.name}<br>
-                        Quantity: ${item.quantity}
-                    </div>
-                `;
+    // Load CSV file and populate warehouse
+    async function loadWarehouseProducts(csvFile, warehouseKey) {
+        try {
+            console.log(`Attempting to load: ${csvFile}`);
+            const response = await fetch(csvFile);
+            
+            console.log(`Response status: ${response.status}`);
+            console.log(`Response ok: ${response.ok}`);
+            
+            if (!response.ok) {
+                console.error(`Failed to load ${csvFile}`);
+                return;
+            }
+            
+            const csvText = await response.text();
+            console.log(`CSV Content:\n${csvText}`);
+            
+            const lines = csvText.trim().split('\n');
+            console.log(`Lines: ${lines.length}`);
+            
+            lines.slice(1).forEach(line => {
+                const [name, quantity] = line.split(',');
+                if (name && quantity) {
+                    warehouseData[warehouseKey].contents.push({
+                        name: name.trim(),
+                        quantity: parseInt(quantity.trim())
+                    });
+                }
             });
+            console.log(`Loaded ${warehouseData[warehouseKey].contents.length} items`);
+        } catch (error) {
+            console.error(`Error:`, error);
         }
-        warehouseContentsDiv.innerHTML = contentsHTML;
+    }
+
+    // Display warehouse contents
+    function displayWarehouse(warehouseKey) {
+        const warehouse = warehouseData[warehouseKey];
+        const container = document.getElementById('warehouseContents');
+
+        if (!warehouse || warehouse.contents.length === 0) {
+            container.innerHTML = '<div class="no-contents">No items in this warehouse</div>';
+            return;
+        }
+
+        container.innerHTML = warehouse.contents
+            .map(item => `
+                <div class="warehouse-item">
+                    <strong>${item.name}</strong><br>
+                    Quantity: ${item.quantity}
+                </div>
+            `)
+            .join('');
+    }
+
+    // Handle warehouse selection
+    document.getElementById('warehouse').addEventListener('change', (e) => {
+        displayWarehouse(e.target.value);
+    });
+
+    // Load CSV files when page loads
+    window.addEventListener('DOMContentLoaded', async () => {
+        console.log('Page loaded, starting CSV load...');
+        await loadWarehouseProducts('products/warehouse_1.csv', 'main');
+        await loadWarehouseProducts('/warehouse_2.csv', 'secondary');
     });
 </script>
 </body>   
