@@ -1,7 +1,14 @@
 package com.supermarket.repositories
 
 import com.supermarket.models.User
+import com.supermarket.repositories.UserSessionRepository
 import java.sql.Connection
+import java.util.UUID
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
 
 class UserRepository(private val connection: Connection) {
 
@@ -43,7 +50,7 @@ class UserRepository(private val connection: Connection) {
 
         connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, firstName)
-            stmt.setString(2, lastName)
+            stmt.setString(2, lastName ?: "")
             stmt.setString(3, email)
             stmt.setString(4, phoneNumber)
             stmt.setString(5, passwordHash)
@@ -51,4 +58,10 @@ class UserRepository(private val connection: Connection) {
             stmt.executeUpdate()
         }
     }
+    
+    fun getLoggedInUser(call: ApplicationCall, userSessionRepository: UserSessionRepository): User? {
+        val sessionId = call.request.cookies["SESSION_ID"] ?: return null
+        return userSessionRepository.getUserBySessionId(sessionId)
+    }
+
 }

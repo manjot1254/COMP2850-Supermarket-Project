@@ -2,9 +2,11 @@ package com.supermarket
 
 import com.supermarket.repositories.ProductRepository
 import com.supermarket.repositories.UserRepository
+import com.supermarket.repositories.UserSessionRepository
 import com.supermarket.routes.homeRoutes
 import com.supermarket.routes.authRoutes
 import com.supermarket.routes.warehouseRoutes
+import com.supermarket.routes.productRoutes
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
@@ -27,19 +29,21 @@ fun main() {
 
     val connection = DatabaseConnection.getConnection()
     val userRepository = UserRepository(connection)
-
-    println(userRepository.getUserByEmail("joe@warehouse.com"))
+    val productRepository = ProductRepository(connection)
+    val userSessionRepository = UserSessionRepository(connection)
 
     // Runs Ktor server
     embeddedServer(Netty, port = 8080) {
         routing {
             staticResources("/", "static")
 
-            homeRoutes()
+            homeRoutes()   
 
-            authRoutes(userRepository)
+            authRoutes(userRepository, userSessionRepository)
 
             warehouseRoutes()
+
+            productRoutes(productRepository)
         }
     }.start(wait = true)
 }
