@@ -53,6 +53,9 @@ CREATE TABLE IF NOT EXISTS user_favourites (
   product_id INTEGER,
   created_at DATETIME NOT NULL,
 
+  -- Prevent duplicate favourites for same user and product (one favourite per product per user)
+  UNIQUE(user_id, product_id),
+
   PRIMARY KEY (user_id, product_id),
 
   FOREIGN KEY (user_id)

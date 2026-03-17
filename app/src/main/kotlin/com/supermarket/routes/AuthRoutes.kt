@@ -1,5 +1,7 @@
 package com.supermarket.routes
 
+import io.ktor.server.pebble.PebbleContent
+import io.pebbletemplates.pebble.loader.ClasspathLoader
 import com.supermarket.repositories.UserRepository
 import com.supermarket.repositories.UserSessionRepository
 import com.supermarket.models.User
@@ -15,7 +17,13 @@ import io.ktor.http.content.*
 
 fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: UserSessionRepository) {
     get("/login") {
-        call.respondFile(java.io.File("src/main/resources/login.html"))
+        val loggedInUser = userRepository.getLoggedInUser(call, userSessionRepository)
+
+        call.respond(PebbleContent("login", mapOf(
+            "isLoggedIn" to (loggedInUser?.firstName != null),
+            "loggedInUser" to loggedInUser,
+            "loginMessage" to "", "registerMessage" to ""
+        ) as Map<String, Any>))
     }
 
     // Login route
@@ -26,6 +34,7 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
 
         val user = userRepository.getUserByEmail(email)
 
+        var message = ""
         if (user != null && user.passwordHash == password) {
             val sessionId = UUID.randomUUID().toString()
 
@@ -34,11 +43,12 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
             call.response.cookies.append(
             Cookie("SESSION_ID", sessionId)
             )
-
-            call.respondText("Login successful")
+            message = "Login successful"
         } else {
-            call.respondText("Invalid email or password")
+            message = "Invalid email or password"
         }
+
+        call.respond(PebbleContent("fragments/login-result", mapOf("loginMessage" to message)))
     }
 
     // Register route
@@ -76,23 +86,6 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
     get("/navbar") {
         val loggedInUser = userRepository.getLoggedInUser(call, userSessionRepository)
 
-        val html = if (loggedInUser != null) {
-            """
-            <div class="nav-links">
-                <a href="/profile">Profile</a>
-                <a href="/logout">Log Out</a>
-            </div>
-            """
-        } else {
-            // When logged in, have a clearer pop-up and redirect to homepage
-            """
-            <div class="nav-links">
-                <a href="/login">Log In / Register</a>
-            </div>
-            """
-        }
-
-        call.respondText(html, ContentType.Text.Html)
-        }
-
+        call.respond(PebbleContent("fragments/navbar", mapOf("loggedInUser" to loggedInUser as Any)))
+    }
 }

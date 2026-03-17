@@ -1,17 +1,27 @@
 package com.supermarket.routes
 
+import io.ktor.server.pebble.PebbleContent
+import io.pebbletemplates.pebble.loader.ClasspathLoader
+import com.supermarket.repositories.UserRepository
+import com.supermarket.repositories.UserSessionRepository
+import com.supermarket.models.User
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import io.ktor.http.content.*
 
-fun Route.homeRoutes() {
+fun Route.homeRoutes(userRepository: UserRepository, userSessionRepository: UserSessionRepository) {
 
-    // TODO: Check if user is logged in and show profile instead of login button - work around role
     // Serve main login page 
     get("/") {
-        call.respondFile(java.io.File("src/main/resources/homepage.html"))
+        val loggedInUser = userRepository.getLoggedInUser(call, userSessionRepository)
+
+        call.respond(PebbleContent("homepage", mapOf(
+            "isLoggedIn" to (loggedInUser?.firstName != null),
+            "loggedInUser" to loggedInUser,
+            "loginMessage" to "", "registerMessage" to ""
+        ) as Map<String, Any>))
     }
 
 }

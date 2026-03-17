@@ -1,91 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Warehouse Management</title>
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-<style>
-body{
-    font-family: Arial;
-    background:#f4f4f4;
-}
-.container{
-    width:900px;
-    margin:auto;
-    padding: 20px;
-}
-.header{
-    display:flex;
-    justify-content:space-between;
-    padding:20px 0;
-    font-size:22px;
-    margin-bottom:20px;
-}
-.warehouse-selector{
-    background:white;
-    padding:20px;
-    border:2px solid black;
-    margin-bottom:20px;
-}
-.warehouse-selector label{
-    display:block;
-    margin-bottom:10px;
-    font-weight:bold;
-    font-size:16px;
-}
-#warehouse{
-    width:100%;
-    padding:10px;
-    font-size:14px;
-    border:1px solid #ccc;
-    border-radius:4px;
-    cursor:pointer;
-}
-.warehouse-contents-wrapper{
-    background:white;
-    padding:20px;
-    border:2px solid black;
-}
-.warehouse-contents-wrapper h3{
-    margin-top:0;
-}
-.warehouse-contents{
-    height:400px;
-    overflow-y:auto;
-    border:1px solid #ddd;
-    padding:10px;
-    background:#fafafa;
-}
-.warehouse-item{
-    padding:10px;
-    margin-bottom:10px;
-    background:white;
-    border:1px solid #e0e0e0;
-    border-radius:4px;
-}
-.warehouse-item strong{
-    color:#333;
-}
-.no-contents{
-    padding:20px;
-    text-align:center;
-    color:#999;
-}
-.nav-link {
-    padding: 15px 30px;
-    border-right: 2px solid black;
-    text-decoration: none;
-    color: black;
-}
-button{
-    padding:10px 20px;
-    cursor:pointer;
-}
-</style>
+{% extends "base" %}
+
+{% block content %}
 <body>
 <div class="container">
     <div class="header">
         <div>Warehouse Management</div>
-        <div><a href="/" class="nav-link">Back to Home</a></div>
     </div>
     <!-- Warehouse Selection -->
     <div class="warehouse-selector">
@@ -179,5 +98,5 @@ button{
         await loadWarehouseProducts('/products/warehouse_2.csv', 'secondary');
     });
 </script>
-</body>   
-</html>
+
+{% endblock %}

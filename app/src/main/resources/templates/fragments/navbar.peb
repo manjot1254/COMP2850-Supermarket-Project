@@ -1,0 +1,15 @@
+<div class="nav-links">
+
+    <a href="/">Home</a>
+    
+    {% if isLoggedIn %}
+        <a href="/profile">Profile</a>
+        <a href="/logout">Log Out</a>
+        <a href="/groceries">Groceries</a>
+        <a href="/basket">Basket 🧺</a>
+    {% else %}
+        <a href="/login">Log In / Register</a>
+        <a href="/groceries">Groceries</a>
+    {% endif %}
+
+</div>

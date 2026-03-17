@@ -1,0 +1,9 @@
+{% if loggedInUser %}
+    <h1 class="success">Welcome, {{ loggedInUser.name }}!</h1>
+    <p>You have successfully logged in.</p>
+    <a href="/">Go to Home</a>
+{% else %}
+    <h1 class="error">Login Failed</h1>
+    <p>{{ loginMessage ?: "Unknown error occurred." }}</p>
+    <a href="/login">Try Again</a>
+{% endif %}
