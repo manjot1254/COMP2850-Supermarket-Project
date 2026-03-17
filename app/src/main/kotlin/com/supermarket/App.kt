@@ -12,6 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import io.ktor.http.content.*
+import io.ktor.server.http.content.staticResources
 
 class App {
     val greeting: String
@@ -32,6 +33,8 @@ fun main() {
     // Runs Ktor server
     embeddedServer(Netty, port = 8080) {
         routing {
+            staticResources("/", "static")
+
             homeRoutes()
 
             authRoutes(userRepository)
