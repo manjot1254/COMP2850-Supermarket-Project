@@ -11,4 +11,7 @@ plugins {
 }
 
 rootProject.name = "COMP2850-Supermarket-Project"
-include("app")
+
+include(":app")
+include(":shared")     // new shared KMP module
+include(":androidApp") // new Android app module
