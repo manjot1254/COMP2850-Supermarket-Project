@@ -14,6 +14,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import io.ktor.http.content.*
+import java.time.LocalDateTime
 
 fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: UserSessionRepository) {
     get("/login") {
@@ -33,8 +34,8 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
         val password = params["password"] ?: ""
 
         val user = userRepository.getUserByEmail(email)
-
         var message = ""
+
         if (user != null && user.passwordHash == password) {
             val sessionId = UUID.randomUUID().toString()
 
@@ -48,7 +49,11 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
             message = "Invalid email or password"
         }
 
-        call.respond(PebbleContent("fragments/login-result", mapOf("loginMessage" to message)))
+        call.respond(PebbleContent("fragments/login-result", mapOf(
+            "isLoggedIn" to (message == "Login successful"),
+            "loggedInUser" to if (message == "Login successful") user else null,
+            "loginMessage" to message
+        ) as Map<String, Any>)) 
     }
 
     // Register route
@@ -61,26 +66,34 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
         val lastName = params["lastName"] ?: ""
         val phoneNumber = params["phoneNumber"] ?: ""
 
-        if (password != confirmPassword) {
-            call.respondText("Passwords do not match")
-            return@post
-        }
-
         val existingUser = userRepository.getUserByEmail(email)
-        if (existingUser != null) {
-            call.respondText("Email already registered")
-            return@post
+        var message = ""
+
+        if (password != confirmPassword) {
+            message = "Passwords do not match"
+        }
+        else if (existingUser != null) {
+            message = "Email already registered"
+        }
+        else{       
+            // Need to hash password and update role logic
+            userRepository.createUser(
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                password,
+                "Customer",
+                LocalDateTime.now().toString()
+            )
+            message = "Registration successful"
         }
 
-        userRepository.createUser(
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            password
-        )
+        call.respond(PebbleContent("fragments/register-result", mapOf(
+            "isRegistered" to (message == "Registration successful"),
+            "registerMessage" to message
+        ) as Map<String, Any>)) 
 
-        call.respondText("User registered successfully")
     }
 
     get("/navbar") {
