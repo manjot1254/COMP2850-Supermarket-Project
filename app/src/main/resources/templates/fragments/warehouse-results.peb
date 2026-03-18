@@ -1,0 +1,10 @@
+{% if products is empty %}
+    <div class="no-contents">No items in this warehouse</div>
+{% else %}
+    {% for item in products %}
+        <div class="warehouse-item">
+            <strong>{{ item.name }}</strong><br>
+            Quantity: {{ item.quantity }}
+        </div>
+    {% endfor %}
+{% endif %}

@@ -3,6 +3,8 @@ package com.supermarket
 import com.supermarket.repositories.ProductRepository
 import com.supermarket.repositories.UserRepository
 import com.supermarket.repositories.UserSessionRepository
+import com.supermarket.repositories.WarehouseRepository
+import com.supermarket.repositories.StockRepository
 
 import com.supermarket.routes.homeRoutes
 import com.supermarket.routes.authRoutes
@@ -35,7 +37,9 @@ fun main() {
     val userRepository = UserRepository(connection)
     val productRepository = ProductRepository(connection)
     val userSessionRepository = UserSessionRepository(connection)
-
+    val warehouseRepository = WarehouseRepository(connection)
+    val stockRepository = StockRepository(connection)
+    
     // Runs Ktor server
     embeddedServer(Netty, port = 8080) {
         // Sets up Pebble template engine for HTML templates
@@ -53,7 +57,7 @@ fun main() {
 
             authRoutes(userRepository, userSessionRepository)
 
-            warehouseRoutes(userRepository, userSessionRepository)
+            warehouseRoutes(warehouseRepository, stockRepository)
 
             productRoutes(productRepository)
         }
