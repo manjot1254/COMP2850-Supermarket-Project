@@ -1,5 +1,5 @@
 {% if isRegistered %}
-    <h1 class="success">You have successfully registered.</h1>
+    <h1 class="success">You have successfully registered.</h1>g
     <meta http-equiv="refresh" content="2;url=/" />
 {% else %}
     <h1 class="error">Registration Failed</h1>
