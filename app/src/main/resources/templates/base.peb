@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Supermarket Login</title>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<link rel="stylesheet" href="/styles.css">
+
+</head>
+
+<body>
+
+{% include "fragments/navbar" %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

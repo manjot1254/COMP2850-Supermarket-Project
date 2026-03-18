@@ -40,12 +40,14 @@ class UserRepository(private val connection: Connection) {
         lastName: String?,
         email: String,
         phoneNumber: String,
-        passwordHash: String
+        passwordHash: String,
+        role: String,
+        createdAt: String
     ) {
         val sql = """
             INSERT INTO users 
-            (first_name, last_name, email_address, phone_number, password_hash, role)
-            VALUES (?, ?, ?, ?, ?, 'customer')
+            (first_name, last_name, email_address, phone_number, password_hash, role, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
         connection.prepareStatement(sql).use { stmt ->
@@ -54,6 +56,8 @@ class UserRepository(private val connection: Connection) {
             stmt.setString(3, email)
             stmt.setString(4, phoneNumber)
             stmt.setString(5, passwordHash)
+            stmt.setString(6, role)
+            stmt.setString(7, createdAt)
 
             stmt.executeUpdate()
         }

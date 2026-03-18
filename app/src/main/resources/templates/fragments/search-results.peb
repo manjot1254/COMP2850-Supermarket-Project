@@ -1,0 +1,15 @@
+{% if products is empty %}
+    <p>No results found</p>
+{% else %}
+    {% for product in products %}
+        <div class="product">
+            <p>{{ product.name }} - £{{ product.price }}</p>
+
+            <button 
+                hx-post="/basket/add/{{ product.productId }}"
+                hx-target="#basket-count">
+                Add to basket
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,9 @@
+{% if isLoggedIn %}
+    <h1 class="success">Welcome, {{ loggedInUser.firstName }}!</h1>
+    <p>You have successfully logged in.</p>
+    <meta http-equiv="refresh" content="2;url=/" />
+{% else %}
+    <h1 class="error">Login Failed</h1>
+    <p>{{ loginMessage | default("Unknown error occurred.") }}</p>
+    <meta http-equiv="refresh" content="3;url=/login" />
+{% endif %}

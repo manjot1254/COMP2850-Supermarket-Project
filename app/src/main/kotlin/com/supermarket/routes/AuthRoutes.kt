@@ -1,5 +1,7 @@
 package com.supermarket.routes
 
+import io.ktor.server.pebble.PebbleContent
+import io.pebbletemplates.pebble.loader.ClasspathLoader
 import com.supermarket.repositories.UserRepository
 import com.supermarket.repositories.UserSessionRepository
 import com.supermarket.models.User
@@ -12,10 +14,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import io.ktor.http.content.*
+import java.time.LocalDateTime
 
 fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: UserSessionRepository) {
     get("/login") {
-        call.respondFile(java.io.File("src/main/resources/login.html"))
+        val loggedInUser = userRepository.getLoggedInUser(call, userSessionRepository)
+
+        call.respond(PebbleContent("login", mapOf(
+            "isLoggedIn" to (loggedInUser?.firstName != null),
+            "loggedInUser" to loggedInUser,
+            "loginMessage" to "", "registerMessage" to ""
+        ) as Map<String, Any>))
     }
 
     // Login route
@@ -25,6 +34,7 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
         val password = params["password"] ?: ""
 
         val user = userRepository.getUserByEmail(email)
+        var message = ""
 
         if (user != null && user.passwordHash == password) {
             val sessionId = UUID.randomUUID().toString()
@@ -34,11 +44,16 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
             call.response.cookies.append(
             Cookie("SESSION_ID", sessionId)
             )
-
-            call.respondText("Login successful")
+            message = "Login successful"
         } else {
-            call.respondText("Invalid email or password")
+            message = "Invalid email or password"
         }
+
+        call.respond(PebbleContent("fragments/login-result", mapOf(
+            "isLoggedIn" to (message == "Login successful"),
+            "loggedInUser" to if (message == "Login successful") user else null,
+            "loginMessage" to message
+        ) as Map<String, Any>)) 
     }
 
     // Register route
@@ -51,48 +66,39 @@ fun Route.authRoutes(userRepository: UserRepository, userSessionRepository: User
         val lastName = params["lastName"] ?: ""
         val phoneNumber = params["phoneNumber"] ?: ""
 
-        if (password != confirmPassword) {
-            call.respondText("Passwords do not match")
-            return@post
-        }
-
         val existingUser = userRepository.getUserByEmail(email)
-        if (existingUser != null) {
-            call.respondText("Email already registered")
-            return@post
+        var message = ""
+
+        if (password != confirmPassword) {
+            message = "Passwords do not match"
+        }
+        else if (existingUser != null) {
+            message = "Email already registered"
+        }
+        else{       
+            // Need to hash password and update role logic
+            userRepository.createUser(
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                password,
+                "Customer",
+                LocalDateTime.now().toString()
+            )
+            message = "Registration successful"
         }
 
-        userRepository.createUser(
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            password
-        )
+        call.respond(PebbleContent("fragments/register-result", mapOf(
+            "isRegistered" to (message == "Registration successful"),
+            "registerMessage" to message
+        ) as Map<String, Any>)) 
 
-        call.respondText("User registered successfully")
     }
 
     get("/navbar") {
         val loggedInUser = userRepository.getLoggedInUser(call, userSessionRepository)
 
-        val html = if (loggedInUser != null) {
-            """
-            <div class="nav-links">
-                <a href="/profile">Profile</a>
-                <a href="/logout">Log Out</a>
-            </div>
-            """
-        } else {
-            // When logged in, have a clearer pop-up and redirect to homepage
-            """
-            <div class="nav-links">
-                <a href="/login">Log In / Register</a>
-            </div>
-            """
-        }
-
-        call.respondText(html, ContentType.Text.Html)
-        }
-
+        call.respond(PebbleContent("fragments/navbar", mapOf("loggedInUser" to loggedInUser as Any)))
+    }
 }

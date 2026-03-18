@@ -1,0 +1,140 @@
+/* Homepage/Login Styling */
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+}
+
+.container{
+    width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.forms{
+    display: flex;
+    gap: 40px;
+}
+
+.box{
+    background: white;
+    padding: 30px;
+    width: 50%;
+    border: 2px solid black;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 5px;
+    margin-bottom: 12px;
+}
+
+.nav-links a {
+    padding: 8px 14px;
+    border-right: 2px solid black;
+    text-decoration: none;
+    color: black;
+}
+
+input{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+button{
+    padding:10px 20px;
+    cursor:pointer;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+/* Warehouse Styling */
+.warehouse-selector{
+    background:white;
+    padding:20px;
+    border:2px solid black;
+    margin-bottom:20px;
+}
+
+.warehouse-selector label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:bold;
+    font-size:16px;
+}
+
+#warehouse{
+    width:100%;
+    padding:10px;
+    font-size:14px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+.warehouse-contents-wrapper{
+    background:white;
+    padding:20px;
+    border:2px solid black;
+}
+
+.warehouse-contents-wrapper h3{
+    margin-top:0;
+}
+
+.warehouse-contents{
+    height:400px;
+    overflow-y:auto;
+    border:1px solid #ddd;
+    padding:10px;
+    background:#fafafa;
+}
+
+.warehouse-item{
+    padding:10px;
+    margin-bottom:10px;
+    background:white;
+    border:1px solid #e0e0e0;
+    border-radius:4px;
+}
+
+.warehouse-item strong{
+    color:#333;
+}
+
+.no-contents{
+    padding:20px;
+    text-align:center;
+    color:#999;
+}
+
+.nav-link {
+    padding: 15px 30px;
+    border-right: 2px solid black;
+    text-decoration: none;
+    color: black;
+}
+
+button{
+    padding:10px 20px;
+    cursor:pointer;
+}
