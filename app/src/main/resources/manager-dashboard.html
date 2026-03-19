@@ -60,6 +60,15 @@ display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
 }
+
+.top-products{
+margin:0;
+padding-left:20px;
+}
+
+.top-products li{
+margin-bottom:8px;
+}
 </style>
 
 </head>
@@ -79,39 +88,51 @@ gap:20px;
 
 <div class="card">
 <h3>Orders</h3>
-<p>247</p>
+<p>{{ orders }}</p>
 </div>
 
 <div class="card">
 <h3>Products Sold</h3>
-<p>982</p>
+<p>{{ productsSold }}</p>
 </div>
 
 <div class="card">
 <h3>Total Revenue</h3>
-<p>£37,928</p>
+<p>£{{ revenue }}</p>
 </div>
 
 </div>
 
 <div class="graph">
 <h3>Sales Trend</h3>
-<div class="placeholder">Graph Placeholder</div>
+<div class="placeholder">
+{% if salesTrendPlaceholder %}
+{{ salesTrendPlaceholder }}
+{% else %}
+Graph Placeholder
+{% endif %}
+</div>
 </div>
 
 <div class="bottom">
 
 <div class="card">
 <h3>Sales by Category</h3>
-<div class="placeholder">Pie Chart Placeholder</div>
+<div class="placeholder">
+{% if categorySalesPlaceholder %}
+{{ categorySalesPlaceholder }}
+{% else %}
+Pie Chart Placeholder
+{% endif %}
+</div>
 </div>
 
 <div class="card">
 <h3>Top Products</h3>
-<ol>
-<li>Milk</li>
-<li>Wholemeal Bread</li>
-<li>Chicken Breast</li>
+<ol class="top-products">
+{% for product in topProducts %}
+<li>{{ product }}</li>
+{% endfor %}
 </ol>
 </div>
 
