@@ -6,7 +6,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import io.ktor.http.content.*
 
-fun Route.warehouseRoutes () {
+fun Route.warehouseRoutes() {
 
     // Warehouse route
         get("/warehouse") {
