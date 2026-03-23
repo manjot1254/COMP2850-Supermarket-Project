@@ -7,6 +7,7 @@
 
 // Constant for consistent Kotest version use
 val kotestVersion = "5.9.1"
+val ktor_version = "2.3.7"
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
@@ -51,6 +52,7 @@ dependencies {
 
     // Pebble template engine for HTML templates
     implementation("io.pebbletemplates:pebble:3.2.0")
+    implementation("io.ktor:ktor-server-pebble:$ktor_version")
 }
 
 // Test task configuration to use JUnit and log test results

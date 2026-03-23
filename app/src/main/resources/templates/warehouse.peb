@@ -37,6 +37,75 @@
         </div>
     </div>
 
+    <!-- Pending Changes -->
+    <div class="pending-changes">
+        <h3>Pending Changes</h3>
+        <div id="changes-list" class="changes-list" hx-trigger="change">
+            <div class="no-changes">
+                No changes yet
+            </div>
+        </div>
+    </div>
+
+    <!-- Apply Changes Button -->
+    <div class="actions">
+        <button 
+            id="apply-btn"
+            hx-post="/warehouse/apply"
+            hx-include="#warehouse"
+            hx-target="#apply-message"
+            hx-swap="innerHTML"
+            class="btn-apply"
+            disabled
+        >
+            Apply Changes
+        </button>
+        <div id="apply-message" class="apply-message"></div>
+    </div>
+
 </div>
+
+<script>
+    // Enable/disable apply button and handle changes list updates
+    document.body.addEventListener('htmx:afterSettle', function(evt) {
+        if (evt.detail.target?.id === 'changes-list') {
+            const changesList = document.querySelector('#changes-list');
+            const noChanges = changesList?.querySelector('.no-changes');
+            const applyBtn = document.getElementById('apply-btn');
+            const messageDiv = document.getElementById('apply-message');
+            
+            // Hide the success message when new changes are made
+            messageDiv.innerHTML = '';
+            
+            if (noChanges) {
+                applyBtn.disabled = true;
+            } else {
+                applyBtn.disabled = false;
+            }
+        }
+    });
+    
+    // Handle the apply response
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.target?.id === 'apply-message' && evt.detail.xhr?.status === 200) {
+            // Clear the changes list
+            const changesList = document.querySelector('#changes-list');
+            changesList.innerHTML = '<div class="no-changes">No changes yet</div>';
+            
+            // Disable the apply button
+            document.getElementById('apply-btn').disabled = true;
+            
+            // Show success message
+            const messageDiv = document.getElementById('apply-message');
+            messageDiv.innerHTML = '<div class="success-message">✓ Changes applied successfully!</div>';
+            
+            // Refresh the warehouse contents
+            const warehouseSelect = document.getElementById('warehouse');
+            if (warehouseSelect.value) {
+                htmx.ajax('GET', '/warehouse/data?warehouse=' + warehouseSelect.value, '#warehouseContents');
+            }
+        }
+    });
+</script>
 
 {% endblock %}

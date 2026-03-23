@@ -1,0 +1,27 @@
+{% if pendingChanges is empty %}
+    <div class="no-changes">
+        No changes yet
+    </div>
+{% else %}
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Change</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for change in pendingChanges %}
+                <tr>
+                    <td>{{ change.productName }}</td>
+                    <td class="{% if change.change > 0 %}positive{% else %}negative{% endif %}">
+                        {% if change.change > 0 %}+{% endif %}{{ change.change }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="changes-summary">
+        Total items changed: {{ pendingChanges | length }}
+    </div>
+{% endif %}
