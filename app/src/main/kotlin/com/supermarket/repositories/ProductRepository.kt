@@ -53,4 +53,34 @@ class ProductRepository(private val conn: Connection) {
         return products
     }
 }
+
+    fun searchProducts(query: String): List<Product> {
+        val products = mutableListOf<Product>()
+        val sql = "SELECT * FROM products WHERE name LIKE ?"
+
+        conn.prepareStatement(sql).use { stmt ->
+        
+        stmt.setString(1, "%$query%")
+        val results = stmt.executeQuery()
+
+        while (results.next()) {
+            products.add(
+                Product(
+                    results.getInt("product_id"),
+                    results.getInt("category_id"),
+                    results.getString("name"),
+                    results.getString("location"),
+                    results.getString("description"),
+                    results.getString("barcode"),
+                    results.getDouble("price"),
+                    results.getDouble("volume_per_unit"),
+                    results.getString("image_url"),
+                    results.getString("created_at")
+                )
+            )
+        }
+        
+        return products
+    }
+}
 }

@@ -7,6 +7,7 @@
 
 // Constant for consistent Kotest version use
 val kotestVersion = "5.9.1"
+val ktor_version = "2.3.7"
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
@@ -39,6 +40,7 @@ dependencies {
     // Ktor server
     implementation("io.ktor:ktor-server-core:2.3.7")
     implementation("io.ktor:ktor-server-netty:2.3.7")
+    implementation("io.ktor:ktor-server-pebble:2.3.7")
     implementation("io.ktor:ktor-server-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("ch.qos.logback:logback-classic:1.4.14")
@@ -47,6 +49,10 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+
+    // Pebble template engine for HTML templates
+    implementation("io.pebbletemplates:pebble:3.2.0")
+    implementation("io.ktor:ktor-server-pebble:$ktor_version")
 }
 
 // Test task configuration to use JUnit and log test results

@@ -1,0 +1,30 @@
+{% if products is empty %}
+    <div class="no-contents">No items in this warehouse</div>
+{% else %}
+    {% for item in products %}
+        <div class="warehouse-item">
+            <strong>{{ item.name }}</strong><br>
+            <div class="stock-controls">
+                Quantity: <span id="qty-{{ item.productId }}">{{ item.quantity }}</span>
+                <button 
+                    hx-post="/warehouse/change"
+                    hx-include="#warehouse"
+                    hx-vals='{"productId": "{{ item.productId }}", "productName": "{{ item.name }}", "change": "-1"}'
+                    hx-target="#changes-list"
+                    hx-swap="innerHTML"
+                    class="btn-minus"
+                    type="button"
+                >−</button>
+                <button 
+                    hx-post="/warehouse/change"
+                    hx-include="#warehouse"
+                    hx-vals='{"productId": "{{ item.productId }}", "productName": "{{ item.name }}", "change": "1"}'
+                    hx-target="#changes-list"
+                    hx-swap="innerHTML"
+                    class="btn-plus"
+                    type="button"
+                >+</button>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}

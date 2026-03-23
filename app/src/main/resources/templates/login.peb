@@ -1,56 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Supermarket Login</title>
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+{% extends "base" %}
 
-<style>
-body{
-    font-family: Arial;
-    background:#f4f4f4;
-}
-
-.container{
-    width:900px;
-    margin:auto;
-}
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    padding:20px;
-    font-size:22px;
-}
-
-.forms{
-    display:flex;
-    gap:40px;
-}
-
-.box{
-    background:white;
-    padding:30px;
-    width:50%;
-    border:2px solid black;
-}
-
-input{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
-    margin-bottom:15px;
-}
-
-button{
-    padding:10px 20px;
-    cursor:pointer;
-}
-</style>
-
-</head>
-
-<body>
-
+{% block content %}
 <div class="container">
 
 <div class="header">
@@ -74,7 +24,9 @@ button{
 
     <button type="submit">Login</button>
 </form>
-<div id="login-result"></div>
+<div id="login-result">
+    {{ loginMessage }}
+</div>
 </div>
 
 <!-- REGISTER -->
@@ -95,11 +47,11 @@ button{
 
     <button type="submit">Sign Up</button>
 </form>
-<div id = "register-result"></div>
+<div id = "register-result">
+    {{ registerMessage }}
+</div>
 </div>
 
 </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

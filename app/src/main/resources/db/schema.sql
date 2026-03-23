@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS user_sessions (
-  session_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
+  session_id TEXT,
   ip_address VARCHAR(50),
   created_at DATETIME NOT NULL,
   expires_at DATETIME NOT NULL,
@@ -52,6 +52,9 @@ CREATE TABLE IF NOT EXISTS user_favourites (
   user_id INTEGER,
   product_id INTEGER,
   created_at DATETIME NOT NULL,
+
+  -- Prevent duplicate favourites for same user and product (one favourite per product per user)
+  UNIQUE(user_id, product_id),
 
   PRIMARY KEY (user_id, product_id),
 
